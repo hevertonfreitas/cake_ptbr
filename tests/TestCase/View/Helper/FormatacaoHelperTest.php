@@ -176,10 +176,10 @@ class FormatacaoHelperTest extends TestCase
      */
     public function testMoeda()
     {
-        $this->assertEquals('R$ 0,00', $this->Formatacao->moeda(0));
-        $this->assertEquals('R$ 0,50', $this->Formatacao->moeda(0.5));
-        $this->assertEquals('R$ 0,52', $this->Formatacao->moeda(0.52));
-        $this->assertEquals('R$ 10,00', $this->Formatacao->moeda(10));
-        $this->assertEquals('R$ 10,12', $this->Formatacao->moeda(10.12));
+        $this->assertTrue(in_array($this->Formatacao->moeda(0), ['R$ 0,00', 'R$0,00']));
+        $this->assertTrue(in_array($this->Formatacao->moeda(0.5), ['R$ 0,50', 'R$0,50']));
+        $this->assertTrue(in_array($this->Formatacao->moeda(0.52), ['R$ 0,52', 'R$0,52']));
+        $this->assertTrue(in_array($this->Formatacao->moeda(10), ['R$ 10,00', 'R$10,00']));
+        $this->assertTrue(in_array($this->Formatacao->moeda(10.12), ['R$ 10,12', 'R$10,12']));
     }
 }
