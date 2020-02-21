@@ -11,6 +11,7 @@
  */
 namespace CakePtbr\Test\TestCase\View\Helper;
 
+use Cake\I18n\I18n;
 use CakePtbr\View\Helper\FormatacaoHelper;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
@@ -19,7 +20,7 @@ use Cake\View\View;
  * Formatacao Test Case
  *
  */
-class FormatacaoHelperTeste extends TestCase
+class FormatacaoHelperTest extends TestCase
 {
 
     /**
@@ -41,10 +42,10 @@ class FormatacaoHelperTeste extends TestCase
         parent::setUp();
         $this->Formatacao = new FormatacaoHelper(new View());
         date_default_timezone_set('America/Sao_Paulo');
-//        I18n::locale('pt_BR');
-//        setlocale(LC_TIME, ['pt_BR.uft8', 'pt_BR', 'Português', 'Portuguese', 'pt_BR.UTF-8']);
-//        setlocale(LC_MONETARY, ['pt_BR.uft8', 'pt_BR', 'Português', 'Portuguese', 'pt_BR.UTF-8']);
-//        setlocale(LC_ALL, ['pt_BR.uft8', 'pt_BR', 'Português', 'Portuguese', 'pt_BR.UTF-8']);
+        I18n::setLocale('pt_BR');
+        setlocale(LC_TIME, ['pt_BR.uft8', 'pt_BR', 'Português', 'Portuguese', 'pt_BR.UTF-8']);
+        setlocale(LC_MONETARY, ['pt_BR.uft8', 'pt_BR', 'Português', 'Portuguese', 'pt_BR.UTF-8']);
+        setlocale(LC_ALL, ['pt_BR.uft8', 'pt_BR', 'Português', 'Portuguese', 'pt_BR.UTF-8']);
     }
 
     /**
