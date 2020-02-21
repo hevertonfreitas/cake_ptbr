@@ -11,9 +11,8 @@
  */
 namespace CakePtbr\Test\TestCase\Model\Table;
 
-use Cake\TestSuite\TestCase;
 use CakePtbr\Model\Table\EstadosBrasileirosTable;
-
+use Cake\TestSuite\TestCase;
 
 /**
  * EstadoBrasileiro Test Case
@@ -153,11 +152,11 @@ class EstadoBrasileiroTestCase extends TestCase
     public function testEstadosDoSul()
     {
         $results = $this->EstadosBrasileiros->estadosDoSul();
-        $expected = array(
+        $expected = [
             'PR' => 'Paraná',
             'RS' => 'Rio Grande do Sul',
-            'SC' => 'Santa Catarina'
-        );
+            'SC' => 'Santa Catarina',
+        ];
         $this->assertEquals($results, $expected);
     }
 
@@ -170,12 +169,12 @@ class EstadoBrasileiroTestCase extends TestCase
     public function testEstadosDoSudeste()
     {
         $results = $this->EstadosBrasileiros->estadosDoSudeste();
-        $expected = array(
+        $expected = [
             'ES' => 'Espírito Santo',
             'MG' => 'Minas Gerais',
             'RJ' => 'Rio de Janeiro',
-            'SP' => 'São Paulo'
-        );
+            'SP' => 'São Paulo',
+        ];
         $this->assertEquals($results, $expected);
     }
 
@@ -192,7 +191,7 @@ class EstadoBrasileiroTestCase extends TestCase
             'DF' => 'Distrito Federal',
             'GO' => 'Goiás',
             'MT' => 'Mato Grosso',
-            'MS' => 'Mato Grosso do Sul'
+            'MS' => 'Mato Grosso do Sul',
         ];
         $this->assertEquals($results, $expected);
 
@@ -210,15 +209,15 @@ class EstadoBrasileiroTestCase extends TestCase
     public function testEstadosDoNorte()
     {
         $results = $this->EstadosBrasileiros->estadosDoNorte();
-        $expected = array(
+        $expected = [
             'AC' => 'Acre',
             'AP' => 'Amapá',
             'AM' => 'Amazonas',
             'PA' => 'Pará',
             'RO' => 'Rondônia',
             'RR' => 'Roraima',
-            'TO' => 'Tocantins'
-        );
+            'TO' => 'Tocantins',
+        ];
         $this->assertEquals($results, $expected);
     }
 
@@ -231,7 +230,7 @@ class EstadoBrasileiroTestCase extends TestCase
     public function testEstadosDoNordeste()
     {
         $results = $this->EstadosBrasileiros->estadosDoNordeste();
-        $expected = array(
+        $expected = [
             'AL' => 'Alagoas',
             'BA' => 'Bahia',
             'CE' => 'Ceará',
@@ -240,9 +239,8 @@ class EstadoBrasileiroTestCase extends TestCase
             'PI' => 'Piauí',
             'PE' => 'Pernambuco',
             'RN' => 'Rio Grande do Norte',
-            'SE' => 'Sergipe'
-        );
+            'SE' => 'Sergipe',
+        ];
         $this->assertEquals($results, $expected);
     }
-
 }

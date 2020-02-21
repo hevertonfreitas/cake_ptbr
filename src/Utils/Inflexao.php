@@ -27,7 +27,7 @@ class Inflexao
      */
     public static function acentos($palavra)
     {
-        $espacamentos = array(' ', '_');
+        $espacamentos = [' ', '_'];
         foreach ($espacamentos as $espacamento) {
             if (strpos($palavra, $espacamento) !== false) {
                 $palavra = explode($espacamento, $palavra);
@@ -35,6 +35,7 @@ class Inflexao
                 foreach ($palavra as $pedaco) {
                     $saida .= Inflexao::acentos($pedaco) . $espacamento;
                 }
+
                 return rtrim($saida, $espacamento);
             }
         }
@@ -53,6 +54,7 @@ class Inflexao
         if (preg_match('/(.*)aes$/', $palavra, $matches)) {
             return $matches[1] . 'ães';
         }
+
         return $palavra;
     }
 }

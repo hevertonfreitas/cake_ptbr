@@ -11,13 +11,12 @@
  */
 namespace CakePtbr\Test\TestCase\Model\Behavior;
 
+use CakePtbr\Model;
 use Cake\Database\Expression\Comparison;
+use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use CakePtbr\Model;
-
 
 /**
  * AjusteFloat Test Case
@@ -32,9 +31,9 @@ class AjusteFloatBehaviorTest extends TestCase
      * @var array
      * @access public
      */
-    public $fixtures = array(
-        'plugin.cake_ptbr.produtos'
-    );
+    public $fixtures = [
+        'plugin.CakePtbr.Produtos',
+    ];
 
     /**
      * Produto
@@ -52,21 +51,10 @@ class AjusteFloatBehaviorTest extends TestCase
      */
     public function setUp()
     {
-        $this->Produtos = TableRegistry::get('CakePtbr.Produtos');
+        $tableLocator = new TableLocator();
+        $this->Produtos = $tableLocator->get('CakePtbr.Produtos');
         $this->Produtos->addBehavior("CakePtbr.AjusteFloat");
     }
-
-
-    /**
-     * Tear down
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        TableRegistry::clear();
-        unset($this->Produtos, $this->Produtos);
-    }
-
 
     /**
      * testBeforeFind
@@ -78,14 +66,13 @@ class AjusteFloatBehaviorTest extends TestCase
     {
         $condicoes = [
             'nome' => '1.000,00',
-            'valor' => '1.500,03'
+            'valor' => '1.500,03',
         ];
 
         $consulta = $this->Produtos->find('all')->where(
             $condicoes
         );
         $consulta->all();
-
 
         $condicoesTratadas = [];
         $todosCampos = [];
@@ -98,18 +85,16 @@ class AjusteFloatBehaviorTest extends TestCase
              * @var Comparison $comparison
              */
             if (isset($comparison)) {
-                if ($this->Produtos->schema()->columnType($comparison->getField()) === "float") {
+                if ($this->Produtos->getSchema()->getColumnType($comparison->getField()) === "float") {
                     $condicoesTratadas[$comparison->getField()] = $comparison->getValue();
                 }
                 $todosCampos[$comparison->getField()] = $comparison->getValue();
             }
         });
 
-
         $this->assertEquals("1.000,00", $todosCampos["nome"]);
         $this->assertEquals("1500.03", $condicoesTratadas["valor"]);
     }
-
 
     /**
      * testSave
@@ -121,7 +106,7 @@ class AjusteFloatBehaviorTest extends TestCase
     {
         $data = [
             'nome' => 'Produto 4',
-            'valor' => '5.000,00'
+            'valor' => '5.000,00',
         ];
         $entidade = $this->Produtos->newEntity($data);
         $resultado = $this->Produtos->save($entidade);

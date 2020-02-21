@@ -1,9 +1,10 @@
 <?php
+
 namespace CakePtbr\Test\Traits;
 
-use Cake\TestSuite\TestCase;
 use CakePtbr\Model\Behavior\CorreiosTrait;
 use CakePtbr\Test\TestCase\Model\Behavior\CorreiosTraitImpl;
+use Cake\TestSuite\TestCase;
 
 /**
  * Class CorreiosTraitTest
@@ -32,26 +33,24 @@ class CorreiosTraitTest extends TestCase
 
     public function testValorFrete()
     {
-
         $dados = [
             "servico" => CorreiosTrait::$CORREIOS_SEDEX,
             "cepOrigem" => "88037100",
             "cepDestino" => "86020121",
             "peso" => 1.00,
             "maoPropria" => true,
-            "valorDeclarado" => 20.00,
+            "valorDeclarado" => 30,
             "avisoRecebimento" => false,
             "formato" => CorreiosTrait::$ENCOMENDA_CAIXA,
             "comprimento" => 20.00,
             "altura" => 20.00,
-            "largura" => 30.00
+            "largura" => 30.00,
         ];
 
         $tamanhoInvalido = ['largura' => 10];
         $cepInvalido = ['cepOrigem' => '1000-00'];
         $pesoInvalido = ['peso' => 40];
         $pesoNegativo = ['peso' => -12];
-
 
         $this->assertEquals(CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS, $this->Correios->valorFrete(array_merge($dados, $tamanhoInvalido)));
         $this->assertEquals(CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS, $this->Correios->valorFrete(array_merge($dados, $cepInvalido)));
@@ -61,33 +60,28 @@ class CorreiosTraitTest extends TestCase
         $correios = $this->Correios->valorFrete($dados);
 
         $this->assertEquals([
-            'valorMaoPropria' => '0,00',
-            'valorTarifaValorDeclarado' => '0,00',
-            'valorFrete' => 39,
-            'valorTotal' => '39,80',
+            'valorMaoPropria' => 7.5,
+            'valorTarifaValorDeclarado' => 0.19,
+            'valorFrete' => 58.40,
+            'valorTotal' => 66.09,
             'entregaDomiciliar' => true,
-            'entregaSabado' => true
+            'entregaSabado' => true,
         ], $correios);
-
     }
 
     public function testEndereco()
     {
-        $retorno = $this->Correios->endereco("45810000");
-        $this->assertEquals("Porto Seguro", $retorno['cidade']);
-        $this->assertEquals("BA", $retorno['estado']);
+        $retorno = $this->Correios->endereco('45810000');
+        $this->assertEquals('Porto Seguro', $retorno['cidade']);
+        $this->assertEquals('BA', $retorno['estado']);
 
-        $retorno = $this->Correios->endereco("86020-121");
-        $this->assertContains("fim", $retorno['complemento']);
-        $this->assertEquals("Rua Pernambuco", $retorno['logradouro']);
-        $this->assertEquals("Centro", $retorno['bairro']);
-        $this->assertEquals("Londrina", $retorno['cidade']);
-        $this->assertEquals("PR", $retorno['estado']);
+        $retorno = $this->Correios->endereco('01311-922');
+        $this->assertContains('Avenida Paulista', $retorno['logradouro']);
+        $this->assertEquals('Bela Vista', $retorno['bairro']);
+        $this->assertEquals('São Paulo', $retorno['cidade']);
+        $this->assertEquals('SP', $retorno['estado']);
 
-
-        $retorno = $this->Correios->endereco("00000-121");
+        $retorno = $this->Correios->endereco('00000-121');
         $this->assertEquals(CorreiosTrait::$ERRO_POSTMON_CEP_INVALIDO, $retorno);
     }
-
-
 }

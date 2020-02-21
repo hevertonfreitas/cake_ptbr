@@ -11,11 +11,8 @@
  */
 namespace CakePtbr\Model\Behavior;
 
-use Cake\Core\Configure;
-use Cake\Filesystem\File;
+use Cake\Http\Client;
 use Cake\Log\Log;
-use Cake\Network\Http\Client;
-use Cake\ORM\Behavior;
 use Cake\Utility\Xml;
 
 /**
@@ -25,7 +22,6 @@ use Cake\Utility\Xml;
  */
 trait CorreiosTrait
 {
-
 
     // Tipo de frete
     public static $CORREIOS_SEDEX = 40010;
@@ -45,7 +41,6 @@ trait CorreiosTrait
     public static $ERRO_CORREIOS_FALHA_COMUNICACAO = -1002;
     public static $ERRO_CORREIOS_CONTEUDO_INVALIDO = -1003;
     public static $ERRO_POSTMON_CEP_INVALIDO = -1004;
-
 
     /**
      * Cálculo do valor e prazo do frete
@@ -90,38 +85,31 @@ trait CorreiosTrait
             'nVlPeso' => $opcoes["peso"],
             'nCdFormato' => $opcoes["formato"],
             'nVlComprimento' => $opcoes["comprimento"],
-            'nVlAltura' => $opcoes["formato"] === CorreiosTrait::$ENCOMENDA_ENVELOPE ? 0 : $opcoes["altura"] ,
+            'nVlAltura' => $opcoes["formato"] === CorreiosTrait::$ENCOMENDA_ENVELOPE ? 0 : $opcoes["altura"],
             'nVlLargura' => $opcoes["largura"],
-            'nVlDiametro' => $opcoes["formato"] === CorreiosTrait::$ENCOMENDA_ROLO ? $opcoes["diametro"] : 0 ,
+            'nVlDiametro' => $opcoes["formato"] === CorreiosTrait::$ENCOMENDA_ROLO ? $opcoes["diametro"] : 0,
             'sCdMaoPropria' => $opcoes["maoPropria"],
             'nVlValorDeclarado' => $opcoes["valorDeclarado"] ? $opcoes["valorDeclarado"] : 'n',
             'sCdAvisoRecebimento' => $opcoes["avisoRecebimento"] ? $opcoes["avisoRecebimento"] : 'n',
             'StrRetorno' => 'xml',
-            'nIndicaCalculo' => 3
+            'nIndicaCalculo' => 3,
         ];
         /*
-         * http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?nCdEmpresa=09146920&sDsSenha=123456&sCepOrigem=70002900&sCepDestino=71939360&nVlPeso=1&nCdFormato=1&nVlComprimento=30&nVlAltura=30&nVlLargura=30&sCdMaoPropria=n&nVlValorDeclarado=0&sCdAvisoRecebimento=n&nCdServico=40010&nVlDiametro=0&StrRetorno=xml&nIndicaCalculo=3
+         * https://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?nCdEmpresa=09146920&sDsSenha=123456&sCepOrigem=70002900&sCepDestino=71939360&nVlPeso=1&nCdFormato=1&nVlComprimento=30&nVlAltura=30&nVlLargura=30&sCdMaoPropria=n&nVlValorDeclarado=0&sCdAvisoRecebimento=n&nCdServico=40010&nVlDiametro=0&StrRetorno=xml&nIndicaCalculo=3
          */
 
-        $retornoCorreios = $this->_requisitaUrl('http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx', 'get', $query);
-
-
-
-
+        $retornoCorreios = $this->_requisitaUrl('https://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx', 'get', $query);
 
         if (is_integer($retornoCorreios)) {
             return $retornoCorreios;
         }
 
-
         $xml = Xml::build($retornoCorreios);
         $infoCorreios = Xml::toArray($xml);
-
 
         if (!isset($infoCorreios['Servicos']['cServico'])) {
             return CorreiosTrait::$ERRO_CORREIOS_CONTEUDO_INVALIDO;
         }
-
 
         extract($infoCorreios['Servicos']['cServico']);
         /**
@@ -132,15 +120,25 @@ trait CorreiosTrait
          * @var string $EntregaSabado
          */
         return [
-            'valorMaoPropria' => $ValorMaoPropria,
-            'valorTarifaValorDeclarado' => $ValorValorDeclarado,
-            'valorFrete' => ($Valor - $ValorValorDeclarado - $ValorMaoPropria),
-            'valorTotal' => $Valor,
+            'valorMaoPropria' => $this->_formataValor($ValorMaoPropria),
+            'valorTarifaValorDeclarado' => $this->_formataValor($ValorValorDeclarado),
+            'valorFrete' => $this->_formataValor($Valor) - $this->_formataValor($ValorValorDeclarado) - $this->_formataValor($ValorMaoPropria),
+            'valorTotal' => $this->_formataValor($Valor),
             'entregaDomiciliar' => $EntregaDomiciliar === "S" ? true : false,
-            'entregaSabado' => $EntregaSabado === "S" ? true : false
+            'entregaSabado' => $EntregaSabado === "S" ? true : false,
         ];
     }
 
+    /**
+     * Converte uma string de valor numerico do padrão brasileiro para float
+     *
+     * @param string $valor Valor em formato brasileiro
+     * @return float
+     */
+    private function _formataValor($valor = '')
+    {
+        return (float)str_replace(',', '.', str_replace('.', '', $valor));
+    }
 
     /**
      * Pegar o endereço de um CEP específico usando a API Postmon (postmon.com.br)
@@ -150,20 +148,20 @@ trait CorreiosTrait
      */
     public function endereco($cep)
     {
-        if (!$this->_validaCep($cep, "postmon")) {
+        if (!$this->_validaCep($cep, 'postmon')) {
             return CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS;
         }
 
-        $url =  "http://api.postmon.com.br/v1/cep/" . $cep;
+        $url = 'https://api.postmon.com.br/v1/cep/' . $cep;
 
         $cliente = new Client();
         $resposta = $cliente->get($url);
 
-        if ($resposta->statusCode() === "404") {
+        if ($resposta->getStatusCode() !== 200) {
             return CorreiosTrait::$ERRO_POSTMON_CEP_INVALIDO;
         }
 
-        return $resposta->json;
+        return $resposta->getJson();
     }
 
     /**
@@ -177,8 +175,9 @@ trait CorreiosTrait
             CorreiosTrait::$ERRO_CORREIOS_CONTEUDO_INVALIDO,
             CorreiosTrait::$ERRO_CORREIOS_EXCESSO_PESO,
             CorreiosTrait::$ERRO_CORREIOS_FALHA_COMUNICACAO,
-            CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS
+            CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS,
         ];
+
         return in_array($valor, $todosErros);
     }
 
@@ -226,10 +225,10 @@ trait CorreiosTrait
      * Verificar se o CEP digitado está correto
      *
      * @param string $cep CEP
-     * @return boolean CEP Correto
+     * @return bool CEP Correto
      * @access protected
      */
-    protected function _validaCep($cep, $api = '')
+    protected function _validaCep($cep)
     {
         if ($api === 'postmon') {
             if (preg_match('/^\d{8}$/', $cep)) {
@@ -241,6 +240,7 @@ trait CorreiosTrait
             }
         }
         Log::debug("## " . $cep);
+
         return (bool)(preg_match('/^\d{5}\-?\d{3}$/', $cep) || preg_match('/^\d{8}$/', $cep));
     }
 
@@ -263,11 +263,10 @@ trait CorreiosTrait
             $response = $httpClient->post($url, $query);
         }
 
-
         if (!$response->isOk()) {
             return CorreiosTrait::$ERRO_CORREIOS_FALHA_COMUNICACAO;
         }
 
-        return trim($response->body());
+        return trim($response->getStringBody());
     }
 }

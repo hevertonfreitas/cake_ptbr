@@ -39,7 +39,7 @@ class EstadosHelper extends Helper
      *                'uf' para mostrar apenas as siglas, sem os nomes
      * @return string
      */
-    public function select($fieldName, $selected = null, $attributes = array())
+    public function select($fieldName, $selected = null, $attributes = [])
     {
         $options = Estados::lista();
         if (isset($attributes['uf']) && $attributes['uf'] === true) {
@@ -53,6 +53,7 @@ class EstadosHelper extends Helper
         if ($selected) {
             $attributes['value'] = $selected;
         }
+
         return $this->Form->select($fieldName, $options, $attributes);
     }
 }

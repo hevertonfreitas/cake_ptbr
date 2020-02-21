@@ -11,10 +11,9 @@
  */
 namespace CakePtbr\Test\TestCase\Config;
 
-use Cake\Utility\Inflector;
 use Cake\TestSuite\TestCase;
-require_once ROOT . DS . 'config' . DS . 'inflections.php';
-
+use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 
 /**
  * Inflections Test Case
@@ -62,7 +61,6 @@ class InflectionsTest extends TestCase
         $this->assertEquals('palavras_chave', Inflector::singularize('palavras_chaves'));
         $this->assertEquals('Abril', Inflector::singularize('Abris'));
         $this->assertEquals('Azul', Inflector::singularize('Azuis'));
-        
     }
 
     /**
@@ -97,11 +95,11 @@ class InflectionsTest extends TestCase
      */
     public function testSlug()
     {
-        $this->assertEquals('Joao', Inflector::slug('João'));
-        $this->assertEquals('Consequencia', Inflector::slug('Conseqüência'));
-        $this->assertEquals('AOe', Inflector::slug('ÃÓ&'));
-        $this->assertEquals('Linguica-nao-util-agua', Inflector::slug('Linguiça não útil água'));
-        $this->assertEquals('au-au-Sandoval', Inflector::slug('äü au Sandoval'));
+        $this->assertEquals('Joao', Text::slug('João'));
+        $this->assertEquals('Consequencia', Text::slug('Conseqüência'));
+        $this->assertEquals('AO', Text::slug('ÃÓ&'));
+        $this->assertEquals('Linguica-nao-util-agua', Text::slug('Linguiça não útil água'));
+        $this->assertEquals('au-au-Sandoval', Text::slug('äü au Sandoval'));
     }
 
     /**
@@ -132,7 +130,5 @@ class InflectionsTest extends TestCase
         $this->assertEquals('Sotao', Inflector::singularize('Sotaos'));
         $this->assertEquals('Pais', Inflector::singularize('Paises'));
         $this->assertEquals('Pai', Inflector::singularize('Pais'));
-        
     }
-
 }

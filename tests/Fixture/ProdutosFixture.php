@@ -10,8 +10,8 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 namespace CakePtbr\Test\Fixture;
-use Cake\TestSuite\Fixture\TestFixture;
 
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Produto Fixture
@@ -26,7 +26,7 @@ class ProdutosFixture extends TestFixture
      * @var string
      * @access public
      */
-    var $name = 'Produto';
+    public $name = 'Produto';
 
     /**
      * Campos da tabela
@@ -34,11 +34,11 @@ class ProdutosFixture extends TestFixture
      * @var array
      * @access public
      */
-    var $fields = [
-        'id' => ['type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'],
-        'nome' => ['type' => 'string', 'null' => false, 'default' => NULL],
-        'valor' => ['type' => 'float', 'null' => false, 'default' => NULL],
-        '_constraints' => [ 'primary' => ['type' => 'primary', 'columns' => ['id']] ]
+    public $fields = [
+        'id' => ['type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'],
+        'nome' => ['type' => 'string', 'null' => false, 'default' => null],
+        'valor' => ['type' => 'float', 'null' => false, 'default' => null],
+        '_constraints' => [ 'primary' => ['type' => 'primary', 'columns' => ['id']] ],
     ];
 
     /**
@@ -47,21 +47,21 @@ class ProdutosFixture extends TestFixture
      * @var array
      * @access public
      */
-    var $records = [
+    public $records = [
         [
             'id' => 1,
             'nome' => 'Produto 1',
-            'valor' => 1.99
+            'valor' => 1.99,
         ],
         [
             'id' => 2,
             'nome' => 'Produto 2',
-            'valor' => 1000.20
+            'valor' => 1000.20,
         ],
         [
             'id' => 3,
             'nome' => 'Produto 3',
-            'valor' => 1999000.00
-        ]
+            'valor' => 1999000.00,
+        ],
     ];
 }

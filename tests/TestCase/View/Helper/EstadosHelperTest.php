@@ -11,13 +11,11 @@
  */
 namespace CakePtbr\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase;
-use Cake\Utility\Inflector;
-use Cake\View\View;
 use CakePtbr\Lib\Estados;
 use CakePtbr\View\Helper\EstadosHelper;
+use Cake\TestSuite\TestCase;
+use Cake\View\View;
 use Symfony\Component\DomCrawler\Crawler;
-
 
 /**
  * Estado Test Case
@@ -63,7 +61,6 @@ class EstadosHelperTest extends TestCase
      */
     public function testSelect()
     {
-
         $crawler = new Crawler($this->__removeAcentos($this->Estados->select('Model.uf')));
         $this->assertEquals(27, $crawler->filter("select[name='Model[uf]'] > option")->count());
 
@@ -75,8 +72,7 @@ class EstadosHelperTest extends TestCase
             $this->assertEquals($this->__removeAcentos($this->listaEstados[$option->getAttribute("value")]), trim($option->textContent));
         }
 
-
-        $crawler = new Crawler($this->__removeAcentos($this->Estados->select('Model.uf', null, array('uf' => true))));
+        $crawler = new Crawler($this->__removeAcentos($this->Estados->select('Model.uf', null, ['uf' => true])));
         $this->assertEquals(27, $crawler->filter("select[name='Model[uf]'] > option")->count());
 
         foreach ($crawler->filter("select > option") as $option) {
@@ -84,14 +80,14 @@ class EstadosHelperTest extends TestCase
             $this->assertEquals($option->getAttribute("value"), trim($option->textContent));
         }
 
-        $crawler = new Crawler($this->__removeAcentos($this->Estados->select('Model.uf', 'BA', array('uf' => true))));
+        $crawler = new Crawler($this->__removeAcentos($this->Estados->select('Model.uf', 'BA', ['uf' => true])));
         $this->assertEquals(27, $crawler->filter("select[name='Model[uf]'] > option")->count());
         $this->assertEquals(1, $crawler->filter("select > option[selected='selected']")->count());
         $this->assertEquals("BA", $crawler->filter("select > option[selected='selected']")->getNode(0)->textContent);
-
     }
 
-    private function __removeAcentos($string) {
+    private function __removeAcentos($string)
+    {
         $replace = [
             'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'Ae',
             '&Auml;' => 'A', 'Å' => 'A', 'Ā' => 'A', 'Ą' => 'A', 'Ă' => 'A', 'Æ' => 'Ae',
@@ -136,10 +132,9 @@ class EstadosHelperTest extends TestCase
             'м' => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's',
             'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c', 'ч' => 'ch',
             'ш' => 'sh', 'щ' => 'sch', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e',
-            'ю' => 'yu', 'я' => 'ya'
+            'ю' => 'yu', 'я' => 'ya',
         ];
 
         return str_replace(array_keys($replace), $replace, $string);
     }
-
 }

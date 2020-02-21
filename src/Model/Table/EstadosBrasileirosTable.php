@@ -23,13 +23,18 @@ class EstadosBrasileirosTable extends Table
 {
 
     /**
+     * @var array
+     */
+    private $_estados;
+
+    /**
      * @inheritdoc
      * @return void
      */
-    public function initialize()
+    public function initialize(array $config)
     {
-        $this->connection(null);
-        $this->table(null);
+//        $this->setConnection(null);
+        $this->setTable(null);
         $this->_estados = Estados::lista();
     }
 
@@ -57,6 +62,7 @@ class EstadosBrasileirosTable extends Table
                     return $this->todosEstados();
             }
         }
+
         return false;
     }
 
@@ -74,6 +80,7 @@ class EstadosBrasileirosTable extends Table
         }
         $estados = $this->_estados;
         unset($estados['DF']);
+
         return $estados;
     }
 
@@ -86,16 +93,17 @@ class EstadosBrasileirosTable extends Table
      */
     public function todosEstados($incluirDF = true)
     {
-        $estados = array('EstadoBrasileiro' => array());
+        $estados = ['EstadoBrasileiro' => []];
         foreach ($this->_estados as $sigla => $nome) {
             if (!$incluirDF && $sigla === 'DF') {
                 continue;
             }
-            $estados['EstadoBrasileiro'][] = array(
+            $estados['EstadoBrasileiro'][] = [
                 'sigla' => $sigla,
-                'nome' => $nome
-            );
+                'nome' => $nome,
+            ];
         }
+
         return $estados;
     }
 
@@ -111,6 +119,7 @@ class EstadosBrasileirosTable extends Table
         if (isset($this->_estados[$sigla])) {
             return $this->_estados[$sigla];
         }
+
         return false;
     }
 
@@ -125,6 +134,7 @@ class EstadosBrasileirosTable extends Table
         if ($sigla = array_search($estado, $this->_estados)) {
             return $sigla;
         }
+
         return false;
     }
 
@@ -136,7 +146,7 @@ class EstadosBrasileirosTable extends Table
      */
     public function estadosDoSul()
     {
-        return $this->_estadosPorRegiao(array('PR', 'RS', 'SC'));
+        return $this->_estadosPorRegiao(['PR', 'RS', 'SC']);
     }
 
     /**
@@ -147,7 +157,7 @@ class EstadosBrasileirosTable extends Table
      */
     public function estadosDoSudeste()
     {
-        return $this->_estadosPorRegiao(array('ES', 'MG', 'RJ', 'SP'));
+        return $this->_estadosPorRegiao(['ES', 'MG', 'RJ', 'SP']);
     }
 
     /**
@@ -160,9 +170,10 @@ class EstadosBrasileirosTable extends Table
     public function estadosDoCentroOeste($incluirDF = true)
     {
         if ($incluirDF) {
-            return $this->_estadosPorRegiao(array('DF', 'GO', 'MT', 'MS'));
+            return $this->_estadosPorRegiao(['DF', 'GO', 'MT', 'MS']);
         }
-        return $this->_estadosPorRegiao(array('GO', 'MT', 'MS'));
+
+        return $this->_estadosPorRegiao(['GO', 'MT', 'MS']);
     }
 
     /**
@@ -173,7 +184,7 @@ class EstadosBrasileirosTable extends Table
      */
     public function estadosDoNorte()
     {
-        return $this->_estadosPorRegiao(array('AC', 'AP', 'AM', 'PA', 'RO', 'RR', 'TO'));
+        return $this->_estadosPorRegiao(['AC', 'AP', 'AM', 'PA', 'RO', 'RR', 'TO']);
     }
 
     /**
@@ -184,7 +195,7 @@ class EstadosBrasileirosTable extends Table
      */
     public function estadosDoNordeste()
     {
-        return $this->_estadosPorRegiao(array('AL', 'BA', 'CE', 'MA', 'PB', 'PI', 'PE', 'RN', 'SE'));
+        return $this->_estadosPorRegiao(['AL', 'BA', 'CE', 'MA', 'PB', 'PI', 'PE', 'RN', 'SE']);
     }
 
     /**
@@ -196,10 +207,11 @@ class EstadosBrasileirosTable extends Table
      */
     protected function _estadosPorRegiao($estados)
     {
-        $retorno = array();
+        $retorno = [];
         foreach ($estados as $estado) {
             $retorno[$estado] = $this->_estados[$estado];
         }
+
         return $retorno;
     }
 }

@@ -40,9 +40,9 @@ class AjusteDataBehavior extends Behavior
     {
         if (empty($config)) {
             // Caso não seja informado os campos, ele irá buscar no schema
-            $this->campos[$this->_table->alias()] = $this->__buscaCamposDate();
+            $this->campos[$this->_table->getAlias()] = $this->__buscaCamposDate();
         } else {
-            $this->campos[$this->_table->alias()] = $config;
+            $this->campos[$this->_table->getAlias()] = $config;
         }
     }
 
@@ -64,7 +64,7 @@ class AjusteDataBehavior extends Behavior
      */
     private function __ajustarDatas(Entity &$entity)
     {
-        foreach ($this->campos[$this->_table->alias()] as $campo) {
+        foreach ($this->campos[$this->_table->getAlias()] as $campo) {
             if ($entity->has($campo) && $entity->get($campo) !== "") {
                 // DATA E HORA
                 if ($this->__isDataHora($entity->get($campo))) {
@@ -93,19 +93,21 @@ class AjusteDataBehavior extends Behavior
      */
     private function __buscaCamposDate()
     {
-        $colunas = $this->_table->schema()->columns();
+        $colunas = $this->_table->getSchema()->columns();
         if (!is_array($colunas)) {
             return [];
         }
         $saida = [];
         foreach ($colunas as $campo) {
-            if ($this->_table->schema()->columnType($campo) === 'date'
-                || $this->_table->schema()->columnType($campo) === 'datetime'
+            if (
+                $this->_table->getSchema()->getColumnType($campo) === 'date'
+                || $this->_table->getSchema()->getColumnType($campo) === 'datetime'
                 && !in_array($campo, ['created', 'updated', 'modified'])
             ) {
                 $saida[] = $campo;
             }
         }
+
         return $saida;
     }
 

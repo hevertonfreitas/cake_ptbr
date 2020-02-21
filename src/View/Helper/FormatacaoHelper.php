@@ -44,31 +44,31 @@ class FormatacaoHelper extends Helper
     {
         $padrao = [
             'invalid' => '31/12/1969',
-            'userOffset' => null
+            'userOffset' => null,
         ];
         $config = array_merge($padrao, $opcoes);
 
         $data = $this->_ajustaDataHora($data) ? $this->_ajustaDataHora($data) : $data;
+
         return $this->Time->format($data, 'dd/MM/YYYY', $config['invalid'], $config['userOffset']);
     }
-
 
     /**
      * Mostrar a data completa
      *
-     * @param int $dataHora Data e hora em timestamp ou null para atual
+     * @param int|\Cake\I18n\Time $dataHora Data e hora em timestamp ou null para atual
      * @return string Descrição da data no estilo "Sexta-feira", 01 de Janeiro de 2010, 00:00:00"
      * @access public
      */
     public function dataCompleta($dataHora = null)
     {
-        $_diasDaSemana = array('Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado');
-        $_meses = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
+        $_diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+        $_meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
         $dataHora = $this->_ajustaDataHora($dataHora);
         $dataHora = is_object($dataHora) ? $dataHora : Time::createFromTimestamp($dataHora);
 
-        return sprintf('%s, %02d de %s de %04d, %s', $_diasDaSemana[$dataHora->dayOfWeek], $dataHora->day, $_meses[$dataHora->month - 1], $dataHora->year, $dataHora->formatLocalized("%T"));
+        return sprintf('%s, %02d de %s de %04d, %s', $_diasDaSemana[$dataHora->dayOfWeek], $dataHora->day, $_meses[$dataHora->month - 1], $dataHora->year, $dataHora->format('H:i:s'));
     }
 
     /**
@@ -114,24 +114,28 @@ class FormatacaoHelper extends Helper
                 } elseif ($_dataHora > 59) {
                     return ($_dataHora - 40) . ' minutos';
                 }
+
                 return $_dataHora . ' minutos';
             case ($_dataHora > 99 && $_dataHora < 2359):
                 $flr = floor($_dataHora * 0.01);
+
                 return $flr == 1 ? '1 hora' : $flr . ' horas';
 
             case ($_dataHora > 2359 && $_dataHora < 310000):
                 $flr = floor($_dataHora * 0.0001);
+
                 return $flr == 1 ? '1 dia' : $flr . ' dias';
 
             case ($_dataHora > 310001 && $_dataHora < 12320000):
                 $flr = floor($_dataHora * 0.000001);
+
                 return $flr == 1 ? '1 mes' : $flr . ' meses';
 
             case ($_dataHora > 100000000):
             default:
                 $flr = floor($_dataHora * 0.00000001);
-                return $flr == 1 ? '1 ano' : $flr . ' anos';
 
+                return $flr == 1 ? '1 ano' : $flr . ' anos';
         }
     }
 
@@ -144,18 +148,19 @@ class FormatacaoHelper extends Helper
      * @return string Data no formato dd/mm/aaaa hh:mm:ss
      * @access public
      */
-    public function dataHora($dataHora = null, $segundos = true, $opcoes = array())
+    public function dataHora($dataHora = null, $segundos = true, $opcoes = [])
     {
-        $padrao = array(
+        $padrao = [
             'invalid' => '31/12/1969',
-            'userOffset' => null
-        );
+            'userOffset' => null,
+        ];
         $config = array_merge($padrao, $opcoes);
 
         $dataHora = $this->_ajustaDataHora($dataHora);
         if ($segundos) {
             return $this->Time->format($dataHora, 'dd/MM/YYYY HH:mm:ss', $config['invalid'], $config['userOffset']);
         }
+
         return $this->Time->format($dataHora, 'dd/MM/YYYY HH:mm', $config['invalid'], $config['userOffset']);
     }
 
@@ -197,7 +202,7 @@ class FormatacaoHelper extends Helper
     {
         $padrao = [
             'after' => '',
-            'zero' => 'R$0,00',
+            'zero' => 'R$ 0,00',
             'places' => 2,
             'negative' => '-',
             'locale' => 'pt_BR',
@@ -205,6 +210,7 @@ class FormatacaoHelper extends Helper
             'escape' => true,
         ];
         $config = array_merge($padrao, $opcoes);
+
         return $this->Number->currency($valor, 'BRL', $config);
     }
 
@@ -218,13 +224,13 @@ class FormatacaoHelper extends Helper
      */
     public function moedaPorExtenso($numero)
     {
-        $singular = array('centavo', 'real', 'mil', 'milhão', 'bilhão', 'trilhão', 'quatrilhão');
-        $plural = array('centavos', 'reais', 'mil', 'milhões', 'bilhões', 'trilhões', 'quatrilhões');
+        $singular = ['centavo', 'real', 'mil', 'milhão', 'bilhão', 'trilhão', 'quatrilhão'];
+        $plural = ['centavos', 'reais', 'mil', 'milhões', 'bilhões', 'trilhões', 'quatrilhões'];
 
-        $c = array('', 'cem', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos');
-        $d = array('', 'dez', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa');
-        $d10 = array('dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezesete', 'dezoito', 'dezenove');
-        $u = array('', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove');
+        $c = ['', 'cem', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
+        $d = ['', 'dez', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+        $d10 = ['dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezesete', 'dezoito', 'dezenove'];
+        $u = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
 
         $z = 0;
         $rt = '';
@@ -242,20 +248,20 @@ class FormatacaoHelper extends Helper
             $fim--;
         }
         foreach ($inteiro as $i => $valor) {
-            $rc = $c[$valor{0}];
+            $rc = $c[$valor[0]];
             if ($valor > 100 && $valor < 200) {
                 $rc = 'cento';
             }
             $rd = '';
-            if ($valor{1} > 1) {
-                $rd = $d[$valor{1}];
+            if ($valor[1] > 1) {
+                $rd = $d[$valor[1]];
             }
             $ru = '';
             if ($valor > 0) {
-                if ($valor{1} == 1) {
-                    $ru = $d10[$valor{2}];
+                if ($valor[1] == 1) {
+                    $ru = $d10[$valor[2]];
                 } else {
-                    $ru = $u[$valor{2}];
+                    $ru = $u[$valor[2]];
                 }
             }
 
@@ -307,15 +313,15 @@ class FormatacaoHelper extends Helper
         if (empty($rt)) {
             return 'zero';
         }
+
         return trim(str_replace('  ', ' ', $rt));
     }
-
 
     /**
      * Se a data for nula, usa data atual
      *
      * @param mixed $data A data a ser ajustada
-     * @return integer Se null, retorna a data/hora atual
+     * @return int|\Cake\I18n\Time Se null, retorna a data/hora atual
      * @access protected
      */
     protected function _ajustaDataHora($data)
