@@ -53,7 +53,7 @@ class AjusteFloatBehaviorTest extends TestCase
     {
         $tableLocator = new TableLocator();
         $this->Produtos = $tableLocator->get('CakePtbr.Produtos');
-        $this->Produtos->addBehavior("CakePtbr.AjusteFloat");
+        $this->Produtos->addBehavior('CakePtbr.AjusteFloat');
     }
 
     /**
@@ -80,20 +80,20 @@ class AjusteFloatBehaviorTest extends TestCase
         /**
          * @var Query $consulta
          */
-        $consulta->clause("where")->traverse(function ($comparison) use (&$condicoesTratadas, &$todosCampos) {
+        $consulta->clause('where')->traverse(function ($comparison) use (&$condicoesTratadas, &$todosCampos) {
             /**
              * @var Comparison $comparison
              */
             if (isset($comparison)) {
-                if ($this->Produtos->getSchema()->getColumnType($comparison->getField()) === "float") {
+                if ($this->Produtos->getSchema()->getColumnType($comparison->getField()) === 'float') {
                     $condicoesTratadas[$comparison->getField()] = $comparison->getValue();
                 }
                 $todosCampos[$comparison->getField()] = $comparison->getValue();
             }
         });
 
-        $this->assertEquals("1.000,00", $todosCampos["nome"]);
-        $this->assertEquals("1500.03", $condicoesTratadas["valor"]);
+        $this->assertEquals('1.000,00', $todosCampos['nome']);
+        $this->assertEquals('1500.03', $condicoesTratadas['valor']);
     }
 
     /**
@@ -112,7 +112,7 @@ class AjusteFloatBehaviorTest extends TestCase
         $resultado = $this->Produtos->save($entidade);
 
         $this->assertInstanceOf('Cake\ORM\Entity', $resultado);
-        $this->assertEquals('5000.00', $entidade->get("valor"));
-        $this->assertEquals('5000.00', $resultado->get("valor"));
+        $this->assertEquals('5000.00', $entidade->get('valor'));
+        $this->assertEquals('5000.00', $resultado->get('valor'));
     }
 }

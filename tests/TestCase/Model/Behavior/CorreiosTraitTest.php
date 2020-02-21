@@ -34,17 +34,17 @@ class CorreiosTraitTest extends TestCase
     public function testValorFrete()
     {
         $dados = [
-            "servico" => CorreiosTrait::$CORREIOS_SEDEX,
-            "cepOrigem" => "88037100",
-            "cepDestino" => "86020121",
-            "peso" => 1.00,
-            "maoPropria" => true,
-            "valorDeclarado" => 30,
-            "avisoRecebimento" => false,
-            "formato" => CorreiosTrait::$ENCOMENDA_CAIXA,
-            "comprimento" => 20.00,
-            "altura" => 20.00,
-            "largura" => 30.00,
+            'servico' => CorreiosTrait::$CORREIOS_SEDEX,
+            'cepOrigem' => '88037100',
+            'cepDestino' => '86020121',
+            'peso' => 1.00,
+            'maoPropria' => true,
+            'valorDeclarado' => 30,
+            'avisoRecebimento' => false,
+            'formato' => CorreiosTrait::$ENCOMENDA_CAIXA,
+            'comprimento' => 20.00,
+            'altura' => 20.00,
+            'largura' => 30.00,
         ];
 
         $tamanhoInvalido = ['largura' => 10];

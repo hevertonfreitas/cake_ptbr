@@ -72,25 +72,25 @@ trait CorreiosTrait
         }
 
         // Ajustes nos parâmetros
-        $opcoes["maoPropria"] = $opcoes["maoPropria"] ? 'S' : 'N';
-        $opcoes["avisoRecebimento"] = $opcoes["avisoRecebimento"] ? 'S' : 'N';
+        $opcoes['maoPropria'] = $opcoes['maoPropria'] ? 'S' : 'N';
+        $opcoes['avisoRecebimento'] = $opcoes['avisoRecebimento'] ? 'S' : 'N';
 
         $query = [
             'op' => 'CalcPrecoPrazo',
-            'nCdEmpresa' => isset($opcoes["empresa"]) ? $opcoes["empresa"] : "",
-            'sDsSenha' => isset($opcoes["senha"]) ? $opcoes["senha"] : "",
-            'nCdServico' => $opcoes["servico"],
-            'sCepOrigem' => $opcoes["cepOrigem"],
-            'sCepDestino' => $opcoes["cepDestino"],
-            'nVlPeso' => $opcoes["peso"],
-            'nCdFormato' => $opcoes["formato"],
-            'nVlComprimento' => $opcoes["comprimento"],
-            'nVlAltura' => $opcoes["formato"] === CorreiosTrait::$ENCOMENDA_ENVELOPE ? 0 : $opcoes["altura"],
-            'nVlLargura' => $opcoes["largura"],
-            'nVlDiametro' => $opcoes["formato"] === CorreiosTrait::$ENCOMENDA_ROLO ? $opcoes["diametro"] : 0,
-            'sCdMaoPropria' => $opcoes["maoPropria"],
-            'nVlValorDeclarado' => $opcoes["valorDeclarado"] ? $opcoes["valorDeclarado"] : 'n',
-            'sCdAvisoRecebimento' => $opcoes["avisoRecebimento"] ? $opcoes["avisoRecebimento"] : 'n',
+            'nCdEmpresa' => isset($opcoes['empresa']) ? $opcoes['empresa'] : '',
+            'sDsSenha' => isset($opcoes['senha']) ? $opcoes['senha'] : '',
+            'nCdServico' => $opcoes['servico'],
+            'sCepOrigem' => $opcoes['cepOrigem'],
+            'sCepDestino' => $opcoes['cepDestino'],
+            'nVlPeso' => $opcoes['peso'],
+            'nCdFormato' => $opcoes['formato'],
+            'nVlComprimento' => $opcoes['comprimento'],
+            'nVlAltura' => $opcoes['formato'] === CorreiosTrait::$ENCOMENDA_ENVELOPE ? 0 : $opcoes['altura'],
+            'nVlLargura' => $opcoes['largura'],
+            'nVlDiametro' => $opcoes['formato'] === CorreiosTrait::$ENCOMENDA_ROLO ? $opcoes['diametro'] : 0,
+            'sCdMaoPropria' => $opcoes['maoPropria'],
+            'nVlValorDeclarado' => $opcoes['valorDeclarado'] ? $opcoes['valorDeclarado'] : 'n',
+            'sCdAvisoRecebimento' => $opcoes['avisoRecebimento'] ? $opcoes['avisoRecebimento'] : 'n',
             'StrRetorno' => 'xml',
             'nIndicaCalculo' => 3,
         ];
@@ -124,8 +124,8 @@ trait CorreiosTrait
             'valorTarifaValorDeclarado' => $this->_formataValor($ValorValorDeclarado),
             'valorFrete' => $this->_formataValor($Valor) - $this->_formataValor($ValorValorDeclarado) - $this->_formataValor($ValorMaoPropria),
             'valorTotal' => $this->_formataValor($Valor),
-            'entregaDomiciliar' => $EntregaDomiciliar === "S" ? true : false,
-            'entregaSabado' => $EntregaSabado === "S" ? true : false,
+            'entregaDomiciliar' => $EntregaDomiciliar === 'S' ? true : false,
+            'entregaSabado' => $EntregaSabado === 'S' ? true : false,
         ];
     }
 
@@ -195,18 +195,18 @@ trait CorreiosTrait
     private function __validaOpcoes($opcoes = [])
     {
         $tipos = [CorreiosTrait::$CORREIOS_SEDEX, CorreiosTrait::$CORREIOS_SEDEX_A_COBRAR, CorreiosTrait::$CORREIOS_SEDEX_10, CorreiosTrait::$CORREIOS_SEDEX_HOJE];
-        if (!in_array($opcoes["servico"], $tipos)) {
+        if (!in_array($opcoes['servico'], $tipos)) {
             return CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS;
         }
-        if (!$this->_validaCep($opcoes["cepOrigem"]) || !$this->_validaCep($opcoes["cepDestino"])) {
+        if (!$this->_validaCep($opcoes['cepOrigem']) || !$this->_validaCep($opcoes['cepDestino'])) {
             return CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS;
         }
-        if (!is_numeric($opcoes["peso"]) || !is_numeric($opcoes["valorDeclarado"])) {
+        if (!is_numeric($opcoes['peso']) || !is_numeric($opcoes['valorDeclarado'])) {
             return CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS;
         }
-        if ($opcoes["peso"] > 30.0) {
+        if ($opcoes['peso'] > 30.0) {
             return CorreiosTrait::$ERRO_CORREIOS_EXCESSO_PESO;
-        } elseif ($opcoes["peso"] < 0.0) {
+        } elseif ($opcoes['peso'] < 0.0) {
             return CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS;
         }
         if ($opcoes['formato'] === CorreiosTrait::$ENCOMENDA_CAIXA) {
@@ -214,7 +214,7 @@ trait CorreiosTrait
                 return CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS;
             }
         }
-        if ($opcoes["valorDeclarado"] < 0.0) {
+        if ($opcoes['valorDeclarado'] < 0.0) {
             return CorreiosTrait::$ERRO_CORREIOS_PARAMETROS_INVALIDOS;
         }
 
@@ -225,21 +225,22 @@ trait CorreiosTrait
      * Verificar se o CEP digitado está correto
      *
      * @param string $cep CEP
+     * @param string $api API
      * @return bool CEP Correto
      * @access protected
      */
-    protected function _validaCep($cep)
+    protected function _validaCep($cep, $api = '')
     {
         if ($api === 'postmon') {
             if (preg_match('/^\d{8}$/', $cep)) {
-                $cep = substr_replace($cep, "-", 5, 0);
+                $cep = substr_replace($cep, '-', 5, 0);
             }
         } else {
             if (preg_match('/^\d{5}\-?\d{3}$/', $cep)) {
-                $cep = str_replace("-", "", $cep);
+                $cep = str_replace('-', '', $cep);
             }
         }
-        Log::debug("## " . $cep);
+        Log::debug('## ' . $cep);
 
         return (bool)(preg_match('/^\d{5}\-?\d{3}$/', $cep) || preg_match('/^\d{8}$/', $cep));
     }
@@ -258,7 +259,7 @@ trait CorreiosTrait
         $httpClient = new Client();
 
         if ($method === 'get') {
-            $response = $httpClient->get($url . "?" . http_build_query($query));
+            $response = $httpClient->get($url . '?' . http_build_query($query));
         } else {
             $response = $httpClient->post($url, $query);
         }

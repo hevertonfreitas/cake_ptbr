@@ -65,7 +65,7 @@ class AjusteDataBehavior extends Behavior
     private function __ajustarDatas(Entity &$entity)
     {
         foreach ($this->campos[$this->_table->getAlias()] as $campo) {
-            if ($entity->has($campo) && $entity->get($campo) !== "") {
+            if ($entity->has($campo) && $entity->get($campo) !== '') {
                 // DATA E HORA
                 if ($this->__isDataHora($entity->get($campo))) {
                     $this->__ajustarDataHora($entity, $campo);
@@ -155,17 +155,17 @@ class AjusteDataBehavior extends Behavior
      * @return array Array vazio, se receber como parametro uma string vazia ou um formato de data não válido.
      * Caso contrário, um array contendo a data e hora.
      */
-    private function __separarDataHora($valor = "")
+    private function __separarDataHora($valor = '')
     {
         if (!isset($valor) || empty($valor)) {
             return [];
         }
-        if (strpos($valor, "T")) {
-            return explode("T", $valor);
-        } elseif (strpos($valor, "t")) {
-            return explode("t", $valor);
-        } elseif (strpos($valor, " ")) {
-            return explode(" ", $valor);
+        if (strpos($valor, 'T')) {
+            return explode('T', $valor);
+        } elseif (strpos($valor, 't')) {
+            return explode('t', $valor);
+        } elseif (strpos($valor, ' ')) {
+            return explode(' ', $valor);
         }
     }
 }

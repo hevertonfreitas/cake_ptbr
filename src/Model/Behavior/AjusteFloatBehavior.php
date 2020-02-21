@@ -45,7 +45,7 @@ class AjusteFloatBehavior extends Behavior
     {
         $this->__floatFields[$this->_table->getAlias()] = [];
         foreach ($this->_table->getSchema()->columns() as $field) {
-            if ($this->_table->getSchema()->getColumnType($field) == "float") {
+            if ($this->_table->getSchema()->getColumnType($field) == 'float') {
                 $this->__floatFields[$this->_table->getAlias()][] = $field;
             }
         }
@@ -65,7 +65,7 @@ class AjusteFloatBehavior extends Behavior
     {
         foreach ($this->_table->getSchema()->columns() as $campo) {
             $valor = $entity->get($campo);
-            if (!empty($valor) && $this->_table->getSchema()->getColumnType($campo) === "float") {
+            if (!empty($valor) && $this->_table->getSchema()->getColumnType($campo) === 'float') {
                 if (!is_string($valor) || preg_match('/^[0-9]+(\.[0-9]+)?$/', $valor)) {
                     continue;
                 }
@@ -89,7 +89,7 @@ class AjusteFloatBehavior extends Behavior
      */
     public function beforeFind(Event $event, Query $query, $options = [])
     {
-        $query->clause("where")->traverse([$this, "traverseClause"]);
+        $query->clause('where')->traverse([$this, 'traverseClause']);
     }
 
     /**
@@ -100,7 +100,7 @@ class AjusteFloatBehavior extends Behavior
     public function traverseClause($comparison)
     {
         if (isset($comparison)) {
-            if ($this->_table->getSchema()->getColumnType($comparison->getField()) === "float") {
+            if ($this->_table->getSchema()->getColumnType($comparison->getField()) === 'float') {
                 if (is_string($comparison->getValue()) && !preg_match('/^[0-9]+(\.[0-9]+)?$/', $comparison->getValue())) {
                     $comparison->setValue(str_replace(',', '.', str_replace('.', '', $comparison->getValue())));
                 }
